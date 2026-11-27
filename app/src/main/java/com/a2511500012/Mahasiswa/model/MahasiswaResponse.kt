@@ -36,5 +36,20 @@
 
              @SerializedName("data")
              val data: Mahasiswa? = null
-
          )
+
+    // Untuk POST: data = {"id": ...}, bukan list
+    data class MahasiswaPostResponse(
+        @SerializedName("status")
+        val status: Boolean,
+
+        @SerializedName("message")
+        val message: String? = null,
+
+        @SerializedName("data")
+        val data: Mahasiswa? = null
+    )
+    data class PostId(
+        @SerializedName("id")
+        val id: String? = null
+    )

@@ -40,19 +40,17 @@
             android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="Jurusan ID (mis. 1 = TI, 2 = SI)">
+        android:text="Jurusan"
+        android:textStyle="bold" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etJurusanId"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:singleLine="true" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <Spinner
+        android:id="@+id/spinnerJurusan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/btnSimpan"

@@ -11,13 +11,26 @@ import com.a2511500012.Mahasiswa.databinding.ActivityTambahMahasiswaBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import retrofit2.Response
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
 
+
 class TambahMahasiswaActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTambahMahasiswaBinding
+
+    private fun parseErrorMessage(response: Response<*>): String {
+         return try {
+             val raw = response.errorBody()?.string()
+             if (raw.isNullOrEmpty()) return response.message()
+             JSONObject(raw).optString("message", response.message())
+             } catch (_: Exception) {
+             response.message()
+             }
+         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +55,7 @@ class TambahMahasiswaActivity : AppCompatActivity() {
         val nim = binding.etNim.text.toString().trim()
         val jurusanId = binding.etJurusanId.text.toString().trim()
 
+        // 1. Validasi client-side (sebelum request)
         if (nama.isEmpty() || nim.isEmpty() || jurusanId.isEmpty()) {
             Toast.makeText(
                 this,
@@ -61,6 +75,7 @@ class TambahMahasiswaActivity : AppCompatActivity() {
             return
         }
 
+        // Kunci tombol agar tidak double-click
         binding.btnSimpan.isEnabled = false
         binding.btnSimpan.text = "Menyimpan..."
         binding.progressBar.visibility = View.VISIBLE
@@ -77,6 +92,7 @@ class TambahMahasiswaActivity : AppCompatActivity() {
                     ApiConfig.getApiService().addMahasiswa(body)
                 }
 
+                // Kalau sukses
                 if (response.isSuccessful && response.body()?.status == true) {
                     Toast.makeText(
                         this@TambahMahasiswaActivity,
@@ -84,16 +100,16 @@ class TambahMahasiswaActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    setResult(RESULT_OK)
+                    setResult(RESULT_OK) // pemicu refresh di MainActivity
                     finish()
                 } else {
+                    // Gagal, kembalikan code dan pesan dari server
                     val code = response.code()
                     val msg = if (response.body() != null) {
-                        response.body()?.message ?: response.message()
-                    } else {
-                        parseErrorMessage(response)
-                    }
-
+                         response.body()?.message ?: response.message()
+                         } else {
+                         parseErrorMessage(response)
+                         }
                     Toast.makeText(
                         this@TambahMahasiswaActivity,
                         "Gagal ($code): $msg",

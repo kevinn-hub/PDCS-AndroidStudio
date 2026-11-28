@@ -1,10 +1,14 @@
+
 package com.a2511500012.Mahasiswa
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.a2511500012.Mahasiswa.adapter.MahasiswaAdapter
@@ -21,6 +25,17 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: MahasiswaAdapter
+
+    // buka form, refresh jika form mengembalikan RESULT_OK
+    private val tambahLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            loadData()
+        }
+    }
+
+    // onCreate, setupRecyclerView, loadData, showDetail: sama seperti P10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,12 +57,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupActions() {
+        // ganti dari Toast ke pindah activity dengan intent
         binding.btnTambah.setOnClickListener {
-            Toast.makeText(
-                this,
-                "Form tambah dibahas di P11",
-                Toast.LENGTH_SHORT
-            ).show()
+            tambahLauncher.launch(
+                Intent(this, TambahMahasiswaActivity::class.java)
+            )
         }
 
         binding.btnCari.setOnClickListener {
@@ -101,14 +115,16 @@ class MainActivity : AppCompatActivity() {
                 }
             } catch (e: SocketTimeoutException) {
                 binding.tvEmpty.visibility = View.VISIBLE
-                binding.tvEmpty.text = "Timeout — periksa IP & port server."
+                binding.tvEmpty.text =
+                    "Timeout — periksa IP & port server."
             } catch (e: IOException) {
                 binding.tvEmpty.visibility = View.VISIBLE
                 binding.tvEmpty.text =
                     "Gagal terhubung (${e.localizedMessage})"
             } catch (e: HttpException) {
                 binding.tvEmpty.visibility = View.VISIBLE
-                binding.tvEmpty.text = "Kesalahan HTTP (${e.code()})"
+                binding.tvEmpty.text =
+                    "Kesalahan HTTP (${e.code()})"
             } catch (e: Exception) {
                 binding.tvEmpty.visibility = View.VISIBLE
                 binding.tvEmpty.text =

@@ -3,6 +3,7 @@ package com.a2511500012.Mahasiswa.api
 import com.a2511500012.Mahasiswa.model.MahasiswaDetailResponse
 import com.a2511500012.Mahasiswa.model.MahasiswaPostResponse
 import com.a2511500012.Mahasiswa.model.MahasiswaResponse
+import com.a2511500012.Mahasiswa.model.JurusanResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -28,4 +29,7 @@ interface ApiInterface {
     suspend fun addMahasiswa(
         @Body body: Map<String, String>
      ): Response<MahasiswaPostResponse>
+
+    @GET("jurusan.php")
+    suspend fun getDaftarJurusan(): Response<JurusanResponse>
 }
